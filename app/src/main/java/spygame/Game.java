@@ -4,11 +4,14 @@ import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 
 public class Game {
     ArrayList<Player> players = new ArrayList<>();
@@ -59,6 +62,13 @@ public class Game {
     void start() {
         started = true;
         players.forEach(Player::startGame);
+        List<Role> roles = guild.getRoles();
+        Random rand = new Random();
+        for(Player player : players) {
+            Role randomElement = roles.get(rand.nextInt(roles.size()));
+            System.out.print(randomElement);
+            guild.addRoleToMember(player.getMember(), randomElement);//.complete();
+        }
     }
 
     public void handlePlayerCommand(MessageReceivedEvent event) {
