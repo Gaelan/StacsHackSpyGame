@@ -61,7 +61,7 @@ public class MessageListener extends ListenerAdapter
 
     List<String> givenList = Arrays.asList("banker", "artist", "lawyer", "noble", "spy");
     Random rand = new Random();
-    String randomElement = givenList.get(rand.nextString(givenList.size()));
+    String randomElement = givenList.get(rand.nextInt(givenList.size()));
 
 
     if (msg.equals("!join")){
