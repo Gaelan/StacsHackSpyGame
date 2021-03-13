@@ -4,9 +4,11 @@ import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Game {
     ArrayList<Player> players = new ArrayList<>();
@@ -43,5 +45,11 @@ public class Game {
 
     void start() {
         players.forEach(Player::startGame);
+    }
+
+    public void handlePlayerCommand(MessageReceivedEvent event) {
+        long id = event.getAuthor().getIdLong();
+        Optional<Player> player = players.stream().filter(p -> p.discordId == id).findAny();
+        player.ifPresent(value -> value.handleCommand(event));
     }
 }

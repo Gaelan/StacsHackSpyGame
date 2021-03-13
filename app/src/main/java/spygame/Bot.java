@@ -41,6 +41,8 @@ public class Bot extends ListenerAdapter
             this.currentGame = new Game(event.getGuild());
         } else if (msg.getContentRaw().equals("!start")) {
             this.currentGame.start();
+        } else {
+            this.currentGame.handlePlayerCommand(event);
         }
     }
 }

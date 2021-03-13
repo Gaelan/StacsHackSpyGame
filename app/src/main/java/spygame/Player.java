@@ -4,9 +4,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.VoiceChannel;
-
-import javax.annotation.RegEx;
-import java.util.ArrayList;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class Player {
     Game game;
@@ -33,6 +31,7 @@ public class Player {
     }
 
     void moveToRoom(Room room) {
+        this.currentRoom = room;
         VoiceChannel vc = game.guild.getVoiceChannelsByName(room.name, true).get(0);
         game.guild.moveVoiceMember(this.getMember(), vc).queue();
     }
@@ -43,5 +42,20 @@ public class Player {
 
     Member getMember() {
         return game.guild.getMemberById(discordId);
+    }
+
+    public void handleCommand(MessageReceivedEvent event) {
+        String msg = event.getMessage().getContentRaw();
+        if (msg.startsWith("!go")) {
+            String roomName = msg.replace("!go ", "");
+            currentRoom
+                    .adjacentRooms.stream().filter(r -> r.getName().equalsIgnoreCase(roomName)).findAny()
+                    .ifPresent(dest -> {
+                        moveToRoom(dest);
+                        getPrivateChannel()
+                                .sendMessage("You enter the " + dest.getName() + ". " + dest.getDescription())
+                                .queue();
+                    });
+        }
     }
 }
