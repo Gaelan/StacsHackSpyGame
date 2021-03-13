@@ -11,33 +11,37 @@ import java.util.Objects;
 public class Game {
     ArrayList<Player> players = new ArrayList<>();
     Guild guild;
-
-//    static final long[] PRIVATE_CHANNEL_IDS = {
-//            820305712113909770L,
-//            820305725519560724L,
-//            820305737489580053L,
-//            820305746368659487L,
-//            820305758456512512L,
-//            820305777247649823L,
-//            820305791009161267L,
-//            820305802207559700L,
-//            820305812223295518L,
-//            820305821291380776L,
-//    };
+    Room entryRoom;
 
     Game(Guild guild) {
         this.guild = guild;
         for (TextChannel channel : getPrivateChannelsCategory().getTextChannels()) {
             channel.delete().queue();
         }
+
+        Room ballroom = new Room(this, "Ballroom", "", new ArrayList<>());
+        Room diningRoom = new Room(this, "Dining Room", "", new ArrayList<>());
+        Room bar = new Room(this, "Bar", "", new ArrayList<>());
+        Room kitchen = new Room(this, "Kitchen", "", new ArrayList<>());
+        Room cloakroom = new Room(this, "Cloakroom", "", new ArrayList<>());
+
+        ballroom.addAdjacentRoom(diningRoom);
+        bar.addAdjacentRoom(diningRoom);
+        kitchen.addAdjacentRoom(diningRoom);
+        cloakroom.addAdjacentRoom(ballroom);
+
+        this.entryRoom = ballroom;
     }
 
     void addPlayer(User user) {
-//        long channelId = PRIVATE_CHANNEL_IDS[players.size()];
         players.add(new Player(this, user));
     }
 
     Category getPrivateChannelsCategory() {
         return guild.getCategoriesByName("Private Channels", true).get(0);
+    }
+
+    void start() {
+        players.forEach(Player::startGame);
     }
 }

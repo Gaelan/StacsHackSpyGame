@@ -28,8 +28,7 @@ public class Bot extends ListenerAdapter
     public void onMessageReceived(MessageReceivedEvent event)
     {
         Message msg = event.getMessage();
-        if (msg.getContentRaw().equals("!join"))
-        {
+        if (msg.getContentRaw().equals("!join")) {
             if (this.currentGame == null) {
                 this.currentGame = new Game(event.getGuild());
             }
@@ -38,6 +37,10 @@ public class Bot extends ListenerAdapter
             channel.sendMessage(user.getAsTag() + " has joined the game!")
                     .queue();
             currentGame.addPlayer(user);
+        } else if (msg.getContentRaw().equals("!reset")) {
+            this.currentGame = new Game(event.getGuild());
+        } else if (msg.getContentRaw().equals("!start")) {
+            this.currentGame.start();
         }
     }
 }

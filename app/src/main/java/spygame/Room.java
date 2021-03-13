@@ -1,6 +1,7 @@
 package spygame;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 
 public class Room {
@@ -9,11 +10,13 @@ public class Room {
     String name;
     String description;
     ArrayList<String> items;
+    HashSet<Room> adjacentRooms = new HashSet<>();
 
     Room(Game game, String name, String description, ArrayList<String> items) {
         this.game = game;
         this.name = name;
         this.description = description;
+        this.items = items;
     }
 
     String getName() {
@@ -48,5 +51,8 @@ public class Room {
         items.remove(item);
     }
 
-    
+    void addAdjacentRoom(Room room) {
+        this.adjacentRooms.add(room);
+        room.adjacentRooms.add(this);
+    }
 }

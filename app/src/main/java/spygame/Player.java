@@ -12,6 +12,7 @@ public class Player {
     Game game;
     long discordId;
     long privateChannelId;
+    Room currentRoom;
 
     Player(Game game, User user) {
         this.game = game;
@@ -21,10 +22,18 @@ public class Player {
         String name = user.getAsTag().toLowerCase().replaceAll("[^a-z]", "-");
         game.getPrivateChannelsCategory().createTextChannel(name).queue(x -> {
             this.privateChannelId = x.getIdLong();
-            getPrivateChannel().sendMessage(user.getAsMention() + ", this is your private channel!").queue();
+            getPrivateChannel().sendMessage(
+                    user.getAsMention() + ", this is your private channel! While you're waiting for the game to start, please join the Pregame channel."
+            ).queue();
         });
+    }
 
-        VoiceChannel vc = game.guild.getVoiceChannelsByName("Ballroom", false).get(0);
+    void startGame() {
+        moveToRoom(game.entryRoom);
+    }
+
+    void moveToRoom(Room room) {
+        VoiceChannel vc = game.guild.getVoiceChannelsByName(room.name, true).get(0);
         game.guild.moveVoiceMember(this.getMember(), vc).queue();
     }
 
