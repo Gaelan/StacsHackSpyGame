@@ -13,6 +13,7 @@ public class Player {
     long discordId;
     long privateChannelId;
     Room currentRoom;
+    private Player votingAgainst;
 
     Player(Game game, User user) {
         this.game = game;
@@ -87,6 +88,16 @@ public class Player {
                     });
         } else if (msg.equalsIgnoreCase("look")) {
             look();
+        } else if (msg.startsWith("vote")) {
+            String playerName = msg.replace("vote ", "");
+            game.players.stream()
+                    .filter(p -> p.getName().equalsIgnoreCase(playerName))
+                    .findAny().ifPresentOrElse(p -> {
+                        this.votingAgainst = p;
+                        sendPrivateMessage("You are now voting against " + p.getName() + ".");
+                    }, () -> {
+                        sendPrivateMessage("I don't know who that is.");
+                    });
         } else {
             sendPrivateMessage("I'm afraid I don't understand.");
         }
