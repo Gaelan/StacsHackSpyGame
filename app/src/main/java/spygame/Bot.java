@@ -19,7 +19,9 @@ public class Bot extends ListenerAdapter
         // args[0] should be the token
         // We only need 2 intents in this bot. We only respond to messages in guilds and private channels.
         // All other events will be disabled.
-        JDABuilder.createLight("ODIwMzAyOTE2OTM4MTA0ODMy.YEzMnw.NWgsENMO7Gy85tl_bC1k4Ss_PAo", GatewayIntent.GUILD_MESSAGES, GatewayIntent.DIRECT_MESSAGES)
+        JDABuilder.createDefault("ODIwMzAyOTE2OTM4MTA0ODMy.YEzMnw.NWgsENMO7Gy85tl_bC1k4Ss_PAo")
+                .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                .enableIntents(GatewayIntent.GUILD_VOICE_STATES)
                 .addEventListeners(new Bot())
                 .setActivity(Activity.playing("Type !ping"))
                 .build();
