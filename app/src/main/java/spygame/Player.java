@@ -1,22 +1,35 @@
 package spygame;
 
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 
+import javax.annotation.RegEx;
 import java.util.ArrayList;
 
 public class Player {
     Game game;
     long discordId;
-    int playerNumber;
+    long privateChannelId;
 
-    Player(Game game, User user, int playerNumber) {
+    Player(Game game, User user) {
         this.game = game;
         this.discordId = user.getIdLong();
-        this.playerNumber = playerNumber;
+
+
+        String name = user.getAsTag().toLowerCase().replaceAll("[^a-z]", "-");
+        game.getPrivateChannelsCategory().createTextChannel(name).queue(x -> {
+            this.privateChannelId = x.getIdLong();
+            getPrivateChannel().sendMessage(user.getAsMention() + ", this is your private channel!").queue();
+        });
+
         VoiceChannel vc = game.guild.getVoiceChannelsByName("Ballroom", false).get(0);
         game.guild.moveVoiceMember(this.getMember(), vc).queue();
+    }
+
+    TextChannel getPrivateChannel() {
+        return game.guild.getTextChannelById(privateChannelId);
     }
 
     Member getMember() {
