@@ -28,19 +28,29 @@ public class Bot extends ListenerAdapter
     public void onMessageReceived(MessageReceivedEvent event)
     {
         Message msg = event.getMessage();
+        MessageChannel channel = event.getChannel();
         if (msg.getContentRaw().equals("!join")) {
             if (this.currentGame == null) {
                 this.currentGame = new Game(event.getGuild());
             }
+            if (currentGame.started) {
+                channel.sendMessage("Sorry, this game has already started. You'll be able to join the next one, or you can use !reset to start a new game now.");
+            }
             User user = msg.getAuthor();
-            MessageChannel channel = event.getChannel();
             channel.sendMessage(user.getAsTag() + " has joined the game!")
                     .queue();
             currentGame.addPlayer(user);
         } else if (msg.getContentRaw().equals("!reset")) {
+            this.currentGame.movePlayersToPregame();
             this.currentGame = new Game(event.getGuild());
         } else if (msg.getContentRaw().equals("!start")) {
-            this.currentGame.start();
+            if (currentGame.started) {
+                channel.sendMessage("The game has already started. If you'd like, you can use !reset to start a new game, or wait for this one to finish.").queue();
+            } else if (currentGame.readyToStart()) {
+                this.currentGame.start();
+            } else {
+                channel.sendMessage("Please make sure everyone is in the Pregame voice channel before starting.").queue();
+            }
         } else {
             this.currentGame.handlePlayerCommand(event);
         }
