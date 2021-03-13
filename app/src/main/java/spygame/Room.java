@@ -9,10 +9,10 @@ public class Room {
     ArrayList<Player> playersInRoom;
     String name;
     String description;
-    ArrayList<String> items;
+    ArrayList<Item> items;
     HashSet<Room> adjacentRooms = new HashSet<>();
 
-    Room(Game game, String name, String description, ArrayList<String> items) {
+    Room(Game game, String name, String description, ArrayList<Item> items) {
         this.game = game;
         this.name = name;
         this.description = description;
@@ -31,7 +31,7 @@ public class Room {
         return playersInRoom;
     }
 
-    ArrayList<String> getItems() {
+    ArrayList<Item> getItems() {
         return items;
     }
 
@@ -43,11 +43,11 @@ public class Room {
         playersInRoom.remove(player);
     }
 
-    void addItem(String item) {
+    void addItem(Item item) {
         items.add(item);
     }
 
-    void removeItem(String item) {
+    void removeItem(Item item) {
         items.remove(item);
     }
 
