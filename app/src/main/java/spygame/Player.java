@@ -114,6 +114,25 @@ public class Player {
                 }, () -> {
                     sendPrivateMessage("I don't know who that is.");
                 });
+        } else if (msg.startsWith("drop")) {
+            if (msg.equals("drop")) {
+                if (currentItem != null) {
+                    currentRoom.addItem(currentItem);
+                    sendPrivateMessage("Dropped " + currentItem.getDescription());
+                    currentItem = null;
+                }
+                else {
+                    sendPrivateMessage("You aren't carrying anything!");
+                }
+            }
+            else {
+                String itemName = msg.replace("drop ","");
+                if (currentItem.getName().equalsIgnoreCase(itemName)) {
+                    currentRoom.addItem(currentItem);
+                    sendPrivateMessage("Dropped " + currentItem.getDescription());
+                    currentItem = null;
+                }
+            }
         }
         else {
             sendPrivateMessage("I'm afraid I don't understand.");
