@@ -21,18 +21,25 @@ public class Game {
         for (TextChannel channel : getPrivateChannelsCategory().getTextChannels()) {
             channel.delete().queue();
         }
-
         Room ballroom = new Room(this, "Ballroom", "From here, you can go into the cloakroom or out into the dining room.", new ArrayList<>());
         Room diningRoom = new Room(this, "Dining Room", "From here, you can visit the bar, kitchen, or ballroom.", new ArrayList<>());
         Room bar = new Room(this, "Bar", "From here, you can visit the dining room or kitchen.", new ArrayList<>());
         Room kitchen = new Room(this, "Kitchen", "From here, you can visit the dining room or bar.", new ArrayList<>());
         Room cloakroom = new Room(this, "Cloakroom", "You can return to the ballroom.", new ArrayList<>());
 
+
+        Item knife = new Item("Knife", "Kitchen knife");
+        Item glass = new Item("Glass", "Small wine glass");
+        Item coathanger = new Item("Coat hanger", "Coat hanger for hanging up coats");
+
         ballroom.addAdjacentRoom(diningRoom);
         bar.addAdjacentRoom(diningRoom);
         bar.addAdjacentRoom(kitchen);
         kitchen.addAdjacentRoom(diningRoom);
         cloakroom.addAdjacentRoom(ballroom);
+        kitchen.addItem(knife);
+        bar.addItem(glass);
+        cloakroom.addItem(coathanger);
 
         this.entryRoom = ballroom;
     }

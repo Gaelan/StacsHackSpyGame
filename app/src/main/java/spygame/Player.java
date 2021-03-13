@@ -13,10 +13,12 @@ public class Player {
     long discordId;
     long privateChannelId;
     Room currentRoom;
+    Item currentItem;
 
     Player(Game game, User user) {
         this.game = game;
         this.discordId = user.getIdLong();
+        this.currentItem = null;
 
         String name = user.getAsTag().toLowerCase().replaceAll("[^a-z]", "-");
         game.getPrivateChannelsCategory().createTextChannel(name).queue(x -> {
@@ -69,13 +71,42 @@ public class Player {
                     });
         } else if (msg.equalsIgnoreCase("look")) {
             look();
-        } else {
+        } else if (msg.startsWith("pick up")) {
+            String itemName = msg.replace("pick up ", "");
+            currentRoom
+                .items.stream().filter(i -> i.getName().equalsIgnoreCase(itemName)).findAny()
+                .ifPresentOrElse(item -> {
+                    currentRoom.removeItem(item);
+                    sendPrivateMessage("You picked up " + item.getName());
+                    currentItem = item;
+                }, () -> {
+                    sendPrivateMessage("That item is not in this room.");
+                    look();
+                });
+        } else if (msg.equalsIgnoreCase("inv")) {
+            inv();
+        }
+        else {
             sendPrivateMessage("I'm afraid I don't understand.");
+        }
+        
+    }
+
+    private void inv() {
+        if (currentItem == null) {
+            sendPrivateMessage("You're not carrying anything!");
+        }
+        else {
+            sendPrivateMessage("You are carrying " + currentItem.getDescription());
         }
     }
 
     private void look() {
         sendPrivateMessage("You're currently in the " + currentRoom.getName() + ". " + currentRoom.getDescription());
+        sendPrivateMessage("You can see: \n");
+        for (Item item : currentRoom.getItems()) {
+            sendPrivateMessage(item.getName() + "\n");
+        }
     }
 
     public void sendPrivateMessage(String message) {
