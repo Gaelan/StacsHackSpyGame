@@ -23,7 +23,7 @@ public class Player {
             this.privateChannelId = x.getIdLong();
 //            getPrivateChannel().getManager().setSlowmode(30).queue();
             getPrivateChannel().sendMessage(
-                    user.getAsMention() + ", this is your private channel! While you're waiting for the game to start, please join the Pregame channel."
+                    user.getAsMention() + ", this is your private channel! While you're waiting for the game to start, please join the Pregame voice channel."
             ).queue();
         });
 
