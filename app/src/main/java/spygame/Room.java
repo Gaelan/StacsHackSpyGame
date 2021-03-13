@@ -6,7 +6,7 @@ import java.util.HashSet;
 
 public class Room {
     Game game;
-    ArrayList<Player> playersInRoom;
+    ArrayList<Player> playersInRoom = new ArrayList<>();
     String name;
     String description;
     ArrayList<Item> items;

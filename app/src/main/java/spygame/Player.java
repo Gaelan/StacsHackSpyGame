@@ -37,7 +37,11 @@ public class Player {
     }
 
     void moveToRoom(Room room) {
+        if (currentRoom != null) {
+            this.currentRoom.removePlayer(this);
+        }
         this.currentRoom = room;
+        this.currentRoom.addPlayer(this);
         VoiceChannel vc = game.guild.getVoiceChannelsByName(room.name, true).get(0);
         game.guild.moveVoiceMember(this.getMember(), vc).queue();
     }
@@ -48,6 +52,10 @@ public class Player {
 
     Member getMember() {
         return game.guild.getMemberById(discordId);
+    }
+
+    String getName() {
+        return getMember().getEffectiveName();
     }
 
     public void handleCommand(MessageReceivedEvent event) {
@@ -61,6 +69,16 @@ public class Player {
             currentRoom
                     .adjacentRooms.stream().filter(r -> r.getName().equalsIgnoreCase(roomName)).findAny()
                     .ifPresentOrElse(dest -> {
+                        for (Player player : this.currentRoom.playersInRoom) {
+                            if (player != this) {
+                                player.notifyPlayerLeft(this, dest);
+                            }
+                        }
+                        for (Player player : dest.playersInRoom) {
+                            if (player != this) {
+                                player.notifyPlayerEntered(this, this.currentRoom);
+                            }
+                        }
                         moveToRoom(dest);
                         sendPrivateMessage("You enter the " + dest.getName() + ". " + dest.getDescription());
                     }, () -> {
@@ -72,6 +90,14 @@ public class Player {
         } else {
             sendPrivateMessage("I'm afraid I don't understand.");
         }
+    }
+
+    private void notifyPlayerLeft(Player player, Room dest) {
+        sendPrivateMessage(player.getName() + " leaves for the " + dest.getName() + ".");
+    }
+
+    private void notifyPlayerEntered(Player player, Room source) {
+        sendPrivateMessage(player.getName() + " enters from the " + source.getName() + ".");
     }
 
     private void look() {
