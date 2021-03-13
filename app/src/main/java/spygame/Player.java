@@ -14,6 +14,7 @@ public class Player {
     long privateChannelId;
     Room currentRoom;
     Item currentItem;
+    private Player votingAgainst;
 
     Player(Game game, User user) {
         this.game = game;
@@ -25,7 +26,7 @@ public class Player {
             this.privateChannelId = x.getIdLong();
 //            getPrivateChannel().getManager().setSlowmode(30).queue();
             getPrivateChannel().sendMessage(
-                    user.getAsMention() + ", this is your private channel! While you're waiting for the game to start, please join the Pregame channel."
+                    user.getAsMention() + ", this is your private channel! While you're waiting for the game to start, please join the Pregame voice channel."
             ).queue();
         });
 
@@ -39,7 +40,11 @@ public class Player {
     }
 
     void moveToRoom(Room room) {
+        if (currentRoom != null) {
+            this.currentRoom.removePlayer(this);
+        }
         this.currentRoom = room;
+        this.currentRoom.addPlayer(this);
         VoiceChannel vc = game.guild.getVoiceChannelsByName(room.name, true).get(0);
         game.guild.moveVoiceMember(this.getMember(), vc).queue();
     }
@@ -50,6 +55,10 @@ public class Player {
 
     Member getMember() {
         return game.guild.getMemberById(discordId);
+    }
+
+    String getName() {
+        return getMember().getEffectiveName();
     }
 
     public void handleCommand(MessageReceivedEvent event) {
@@ -63,6 +72,16 @@ public class Player {
             currentRoom
                     .adjacentRooms.stream().filter(r -> r.getName().equalsIgnoreCase(roomName)).findAny()
                     .ifPresentOrElse(dest -> {
+                        for (Player player : this.currentRoom.playersInRoom) {
+                            if (player != this) {
+                                player.notifyPlayerLeft(this, dest);
+                            }
+                        }
+                        for (Player player : dest.playersInRoom) {
+                            if (player != this) {
+                                player.notifyPlayerEntered(this, this.currentRoom);
+                            }
+                        }
                         moveToRoom(dest);
                         sendPrivateMessage("You enter the " + dest.getName() + ". " + dest.getDescription());
                     }, () -> {
@@ -85,6 +104,16 @@ public class Player {
                 });
         } else if (msg.equalsIgnoreCase("inv")) {
             inv();
+        } else if (msg.startsWith("vote")) {
+            String playerName = msg.replace("vote ", "");
+            game.players.stream()
+                .filter(p -> p.getName().equalsIgnoreCase(playerName))
+                .findAny().ifPresentOrElse(p -> {
+                    this.votingAgainst = p;
+                    sendPrivateMessage("You are now voting against " + p.getName() + ".");
+                }, () -> {
+                    sendPrivateMessage("I don't know who that is.");
+                });
         }
         else {
             sendPrivateMessage("I'm afraid I don't understand.");
@@ -99,6 +128,14 @@ public class Player {
         else {
             sendPrivateMessage("You are carrying " + currentItem.getDescription());
         }
+    }
+
+    private void notifyPlayerLeft(Player player, Room dest) {
+        sendPrivateMessage(player.getName() + " leaves for the " + dest.getName() + ".");
+    }
+
+    private void notifyPlayerEntered(Player player, Room source) {
+        sendPrivateMessage(player.getName() + " enters from the " + source.getName() + ".");
     }
 
     private void look() {
