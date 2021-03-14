@@ -46,4 +46,10 @@ public class PlantMicrophoneMission extends SpyMission {
     String statusUpdate() {
         return "You've planted microphones in " + plantedRooms.size() + " out of " + game.getRoomCount() + " rooms.";
     }
+
+    @Override
+    String leaderBoard(){
+        return "You finished with " + game.getMinutesLeft() + "left. You rank " ;
+
+    }
 }

@@ -32,4 +32,9 @@ public abstract class SpyMission {
     Player getSpy() {
         return game.getSpy();
     }
+
+    /**
+     * Called at the end of the game. Return hi-scores.
+     */
+    abstract String leaderBoard();
 }
