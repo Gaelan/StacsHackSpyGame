@@ -18,8 +18,8 @@ public class FollowMovementsMission extends SpyMission {
 
         Random r = new Random();
         do {
-            target = game.players.get(r.nextInt());
-        } while (!target.isSpy());
+            target = game.players.get(r.nextInt(game.players.size()));
+        } while (target.isSpy());
 
         new Thread(() -> {
             while (!game.finished) {
