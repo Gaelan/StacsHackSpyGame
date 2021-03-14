@@ -71,4 +71,9 @@ public class FollowMovementsMission extends SpyMission {
         int pct = 100 * secsWithTarget / secsTotal;
         return "You've been in the same room as " + target.getName() + " " + pct + "% of the time.";
     }
+
+    @Override
+    String leaderBoard() {
+        return "";
+    }
 }
