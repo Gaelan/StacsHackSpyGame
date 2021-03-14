@@ -1,7 +1,6 @@
 package spygame;
 
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.VoiceChannel;
@@ -49,8 +48,6 @@ public class Player {
         }
         this.currentRoom = room;
         this.currentRoom.addPlayer(this);
-        VoiceChannel vc = game.guild.getVoiceChannelsByName(room.name, true).get(0);
-        game.guild.moveVoiceMember(this.getMember(), vc).queue();
     }
 
     TextChannel getPrivateChannel() {
@@ -148,7 +145,7 @@ public class Player {
         
     }
 
-    private boolean isSpy() {
+    public boolean isSpy() {
         return game.isSpy(this);
     }
 
@@ -207,5 +204,9 @@ public class Player {
         if (this.isSpy()) {
             sendPrivateMessage(game.getSpyMission().statusUpdate());
         }
+    }
+
+    public Player getVotingAgainst() {
+        return votingAgainst;
     }
 }

@@ -113,7 +113,9 @@ public class Game {
     private void gameOver() {
         String message = "Game over!\n";
         message += getSpy().getName() + " was the spy.\n";
-        if (getSpyMission().spyWins()) {
+        if (playersGuessedSpy()) {
+            message += "The partygoers successfully guessed the spy, and won!";
+        } else if (getSpyMission().spyWins()) {
             message += "The spy accomplished their mission, and won!\n";
         } else {
             message += "The spy did not accomplish their mission on time. Everybody else wins!";
@@ -122,6 +124,15 @@ public class Game {
         players.forEach(p -> p.sendPrivateMessage(finalMessage));
         movePlayersToPregame();
         this.finished = true;
+    }
+
+    private boolean playersGuessedSpy() {
+        long correctGuesses = players.stream()
+                .filter(p -> !p.isSpy())
+                .filter(p -> p.getVotingAgainst() == getSpy())
+                .count();
+        return correctGuesses > 0 &&
+                correctGuesses >= ((players.size() - 1) / 2);
     }
 
     public void handlePlayerCommand(MessageReceivedEvent event) {
