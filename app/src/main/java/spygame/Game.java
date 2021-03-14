@@ -20,6 +20,7 @@ public class Game {
     Guild guild;
     Room entryRoom;
     boolean started;
+    boolean finished;
     private Player spy;
     private SpyMission spyMission;
     private int minutesLeft = GAME_LENGTH_MINUTES;
@@ -103,6 +104,7 @@ public class Game {
                     players.forEach(Player::announceTimeRemaining);
                 } else {
                     gameOver();
+                    return;
                 }
             }
         }).start();
@@ -119,6 +121,7 @@ public class Game {
         String finalMessage = message;
         players.forEach(p -> p.sendPrivateMessage(finalMessage));
         movePlayersToPregame();
+        this.finished = true;
     }
 
     public void handlePlayerCommand(MessageReceivedEvent event) {

@@ -33,7 +33,7 @@ public class Bot extends ListenerAdapter
         Message msg = event.getMessage();
         MessageChannel channel = event.getChannel();
         if (msg.getContentRaw().equals("!join")) {
-            if (this.currentGame == null) {
+            if (this.currentGame == null || this.currentGame.finished) {
                 this.currentGame = new Game(event.getGuild());
             }
             if (currentGame.started) {
