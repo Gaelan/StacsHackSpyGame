@@ -71,7 +71,7 @@ public class Player {
         }
 
         String msg = event.getMessage().getContentRaw();
-        if (msg.startsWith("go")) {
+        if (msg.startsWith("go ")) {
             String roomName = msg.replace("go ", "");
             currentRoom
                     .adjacentRooms.stream().filter(r -> r.getName().equalsIgnoreCase(roomName)).findAny()
@@ -94,7 +94,7 @@ public class Player {
                     });
         } else if (msg.equalsIgnoreCase("look")) {
             look();
-        } else if (msg.startsWith("pick up")) {
+        } else if (msg.startsWith("pick up ")) {
             String itemName = msg.replace("pick up ", "");
             currentRoom
                 .items.stream().filter(i -> i.getName().equalsIgnoreCase(itemName)).findAny()
@@ -108,7 +108,7 @@ public class Player {
                 });
         } else if (msg.equalsIgnoreCase("inv")) {
             inv();
-        } else if (msg.startsWith("vote")) {
+        } else if (msg.startsWith("vote ")) {
             String playerName = msg.replace("vote ", "");
             game.players.stream()
                 .filter(p -> p.getName().equalsIgnoreCase(playerName))
@@ -137,13 +137,12 @@ public class Player {
                     currentItem = null;
                 }
             }
-        } else if (this.isSpy()) {
-            game.getSpyMission().handleSpyMessage(event);
         } else if (msg.equals("?")) {
             sendPrivateMessage("You can\n"+
-                               "go _, look, pick up _, inv, vote _, drop _, drop, ?");
-        }
-        else {
+                               "go (place), look, pick up (object), inv, vote (username), drop (object), drop, ?");
+        } else if (this.isSpy()) {
+            game.getSpyMission().handleSpyMessage(event);
+        } else {
             sendPrivateMessage("I'm afraid I don't understand.");
         }
         

@@ -32,6 +32,9 @@ public class PlantMicrophoneMission extends SpyMission {
                 getSpy().sendPrivateMessage("You plant a microphone in the " + room.getName() + ".");
             }
         }
+        else {
+            getSpy().sendPrivateMessage("I'm afraid I don't understand.");
+        }
     }
 
     @Override
