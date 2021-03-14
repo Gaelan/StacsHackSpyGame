@@ -139,7 +139,11 @@ public class Player {
             }
         } else if (this.isSpy()) {
             game.getSpyMission().handleSpyMessage(event);
-        } else {
+        } else if (msg.equals("?")) {
+            sendPrivateMessage("You can\n"+
+                               "go _, look, pick up _, inv, vote _, drop _, drop, ?");
+        }
+        else {
             sendPrivateMessage("I'm afraid I don't understand.");
         }
         
