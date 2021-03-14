@@ -38,6 +38,7 @@ public class Bot extends ListenerAdapter
             }
             if (currentGame.started) {
                 channel.sendMessage("Sorry, this game has already started. You'll be able to join the next one, or you can use !reset to start a new game now.").queue();
+                return;
             }
             User user = msg.getAuthor();
             channel.sendMessage(user.getAsTag() + " has joined the game!")
@@ -49,6 +50,7 @@ public class Bot extends ListenerAdapter
         } else if (msg.getContentRaw().equals("!start")) {
             if (currentGame.started) {
                 channel.sendMessage("The game has already started. If you'd like, you can use !reset to start a new game, or wait for this one to finish.").queue();
+                return;
             } else if (currentGame.readyToStart()) {
                 this.currentGame.start();
             } else {
