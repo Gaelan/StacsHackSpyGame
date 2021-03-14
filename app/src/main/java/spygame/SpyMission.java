@@ -36,5 +36,7 @@ public abstract class SpyMission {
     /**
      * Called at the end of the game. Return hi-scores.
      */
-    abstract String leaderBoard();
+    String leaderBoard() {
+        return "You managed to complete your mission with " + game.getMinutesLeft() + ". This puts you at rank " + leaderBoard() + ". Well Done!";
+    }
 }

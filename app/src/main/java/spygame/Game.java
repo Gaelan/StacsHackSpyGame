@@ -176,4 +176,6 @@ public class Game {
     public int getMinutesLeft() {
         return minutesLeft;
     }
+
+    }
 }
