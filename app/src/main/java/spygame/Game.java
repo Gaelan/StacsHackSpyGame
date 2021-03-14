@@ -37,9 +37,11 @@ public class Game {
         Room cloakroom = new Room(this, "Cloakroom", "You can return to the ballroom.", new ArrayList<>());
 
 
-        Item knife = new Item("Knife", "Kitchen knife");
-        Item glass = new Item("Glass", "Small wine glass");
-        Item coathanger = new Item("Coat hanger", "Coat hanger for hanging up coats");
+        Item knife = new Item("knife", "Kitchen knife");
+        Item glass = new Item("glass", "Small wine glass");
+        Item coathanger = new Item("coat hanger", "Coat hanger for hanging up coats");
+        Item plateOfFood = new Item("plate of food", "A plate of delicious food");
+        Item drink = new Item("glass of whisky", "A glass of malt whisky");
 
         ballroom.addAdjacentRoom(diningRoom);
         bar.addAdjacentRoom(diningRoom);
@@ -49,6 +51,8 @@ public class Game {
         kitchen.addItem(knife);
         bar.addItem(glass);
         cloakroom.addItem(coathanger);
+        kitchen.addItem(plateOfFood);
+        bar.addItem(drink);
 
         this.entryRoom = ballroom;
     }
@@ -177,5 +181,4 @@ public class Game {
         return minutesLeft;
     }
 
-    }
 }

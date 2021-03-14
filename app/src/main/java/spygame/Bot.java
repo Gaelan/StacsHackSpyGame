@@ -17,7 +17,7 @@ public class Bot extends ListenerAdapter
     Game currentGame;
 
     public static void main(String[] args) throws LoginException {
-        JDABuilder.createDefault("ODIwMzAyOTE2OTM4MTA0ODMy.YEzMnw.NWgsENMO7Gy85tl_bC1k4Ss_PAo")
+        JDABuilder.createDefault("ODIwMzAyOTE2OTM4MTA0ODMy.YEzMnw.X4oUVACYXJ7JIk_lIj7K0yPyKYs")
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
                 .enableIntents(GatewayIntent.GUILD_PRESENCES)
                 .enableIntents(GatewayIntent.GUILD_VOICE_STATES)

@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.Objects;
+import java.util.Random;
 
 public class Player {
     Game game;
@@ -15,6 +16,7 @@ public class Player {
     Room currentRoom;
     Item currentItem;
     private Player votingAgainst;
+    private String[] tasks = {"hang up your coat in the cloakroom", "dance in the ballroom", "get a drink from the bar", "get food from the kitchen", "go mingle with the other people"};
 
     Player(Game game, User user) {
         this.game = game;
@@ -40,6 +42,11 @@ public class Player {
         if (game.isSpy(this)) {
             sendPrivateMessage(":detective: You're the spy! Don't tell anyone else. Your secret mission: " + game.getSpyMission().describe());
         }
+        Random rand = new Random();
+        int int1 = rand.nextInt(tasks.length);
+        int int2 = rand.nextInt(tasks.length);
+        sendPrivateMessage("Hint: the game may be more fun if you: " + tasks[int1] + " and " + tasks[int2] + ".");
+        
     }
 
     void moveToRoom(Room room) {
@@ -134,9 +141,86 @@ public class Player {
                     currentItem = null;
                 }
             }
-        } else if (msg.equals("?")) {
+        } else if (msg.equals("dance")) {
+            sendPrivateMessage("Wow, you have some good moves!");
+        } else if (msg.startsWith("get")) {
+            System.out.println(msg);
+            if (msg.equals("get food")) {
+                if (currentRoom.getName().equals("Kitchen")) {
+                    currentRoom
+                    .items.stream().filter(i -> i.getName().equalsIgnoreCase("plate of food")).findAny()
+                    .ifPresentOrElse(item -> {
+                        sendPrivateMessage("You picked up some food");
+                        currentItem = item;
+                    }, () -> {
+                    });
+                }
+                else {
+                    sendPrivateMessage("There is no food here!");
+                }
+            }
+            else if (msg.equals("get drink")) {
+                if (currentRoom.getName().equals("Bar")) {
+                    currentRoom
+                    .items.stream().filter(i -> i.getName().equalsIgnoreCase("glass of whisky")).findAny()
+                    .ifPresentOrElse(item -> {
+                        sendPrivateMessage("You picked up a glass of whisky");
+                        currentItem = item;
+                    }, () -> {
+                    });
+                }
+                else {
+                    sendPrivateMessage("There are no drinks here!");
+                }
+            }
+            else {
+                sendPrivateMessage("You can't get that!");
+            }
+        } else if (msg.startsWith("eat")) {
+            if (msg.equals("eat food")) {
+                if (currentRoom.getName().equalsIgnoreCase("Dining Room")) {
+                    if (currentItem.getName().equalsIgnoreCase("plate of food")) {
+                        sendPrivateMessage("You ate the food!");
+                    currentItem = null;
+                    }
+                    else {
+                        sendPrivateMessage("You aren't carrying any food!");
+                    }
+                }
+                else {
+                    sendPrivateMessage("You can't eat here!");
+                }
+            }
+            else {
+                sendPrivateMessage("You can't eat that!");
+            }
+        } else if (msg.equals("drink") || msg.equals("drink whisky")) {
+            if (currentItem.getName().equalsIgnoreCase("glass of whisky")) {
+                    sendPrivateMessage("You drank the whisky!");
+                currentItem = null;
+                }
+            else {
+                sendPrivateMessage("You aren't carrying a drink!");
+            }
+        } 
+
+        else if (msg.startsWith("hang up")) {
+            if (msg.equals("hang up coat")) {
+                if (currentRoom.getName().equals("Cloakroom")) {
+                    sendPrivateMessage("You hung your coat up!");
+                }
+                else {
+                    sendPrivateMessage("You can't hang that up in this room!");
+                }
+            }
+            else {
+                sendPrivateMessage("You can't hang that up!");
+            }
+        }
+        
+        else if (msg.equals("?")) {
             sendPrivateMessage("You can\n"+
-                               "go (place), look, pick up (object), inv, vote (username), drop (object), drop, ?");
+                               "go (place), look, pick up (object), inv, vote (username), drop (object), drop, dance, get(food/drink), eat(food), drink, ?");
         } else if (this.isSpy()) {
             game.getSpyMission().handleSpyMessage(event);
         } else {
