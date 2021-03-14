@@ -18,6 +18,7 @@ public class Game {
     Guild guild;
     Room entryRoom;
     boolean started;
+    private Player spy;
 
     Game(Guild guild) {
         this.guild = guild;
@@ -60,14 +61,22 @@ public class Game {
     }
 
     void start() {
-        started = true;
-        players.forEach(Player::startGame);
-        List<Role> roles = guild.getRoles();
         Random rand = new Random();
+
+        started = true;
+
+        this.spy = players.get(rand.nextInt(players.size()));
+
+        players.forEach(Player::startGame);
+
+        List<Role> roles = guild.getRoles();
         for(Player player : players) {
-            Role randomElement = roles.get(rand.nextInt(roles.size()));
+            Role randomElement;
+            do {
+                randomElement = roles.get(rand.nextInt(roles.size()));
+            } while (randomElement.getName().equalsIgnoreCase("admin"));
             System.out.print(randomElement);
-            guild.addRoleToMember(player.getMember(), randomElement);//.complete();
+            guild.addRoleToMember(player.getMember(), randomElement).queue();
         }
     }
 
@@ -80,5 +89,9 @@ public class Game {
 
     public void movePlayersToPregame() {
         players.forEach(Player::moveToPregame);
+    }
+
+    public boolean isSpy(Player player) {
+        return spy == player;
     }
 }

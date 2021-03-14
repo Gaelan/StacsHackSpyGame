@@ -38,6 +38,9 @@ public class Player {
         moveToRoom(game.entryRoom);
         sendPrivateMessage("You arrive at the party, entering into the " + currentRoom.getName() + ". " + currentRoom.getDescription());
         sendPrivateMessage("To move, use commands like `go dining room`.");
+        if (game.isSpy(this)) {
+            sendPrivateMessage(":detective: You're the spy! Don't tell anyone else.");
+        }
     }
 
     void moveToRoom(Room room) {

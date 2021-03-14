@@ -34,7 +34,7 @@ public class Bot extends ListenerAdapter
                 this.currentGame = new Game(event.getGuild());
             }
             if (currentGame.started) {
-                channel.sendMessage("Sorry, this game has already started. You'll be able to join the next one, or you can use !reset to start a new game now.");
+                channel.sendMessage("Sorry, this game has already started. You'll be able to join the next one, or you can use !reset to start a new game now.").queue();
             }
             User user = msg.getAuthor();
             channel.sendMessage(user.getAsTag() + " has joined the game!")
