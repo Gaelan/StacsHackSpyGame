@@ -8,17 +8,21 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
 public class Game {
+    // low for testing, probably should be something closer to 10 eventually
+    private static final int GAME_LENGTH_MINUTES = 3;
+
     ArrayList<Player> players = new ArrayList<>();
+    ArrayList<Room> rooms = new ArrayList<>();
     Guild guild;
     Room entryRoom;
     boolean started;
     private Player spy;
+    private SpyMission spyMission;
+    private int minutesLeft = GAME_LENGTH_MINUTES;
 
     Game(Guild guild) {
         this.guild = guild;
@@ -66,18 +70,55 @@ public class Game {
         started = true;
 
         this.spy = players.get(rand.nextInt(players.size()));
+        this.spyMission = new PlantMicrophoneMission(this);
 
         players.forEach(Player::startGame);
 
-        List<Role> roles = guild.getRoles();
-        for(Player player : players) {
-            Role randomElement;
-            do {
-                randomElement = roles.get(rand.nextInt(roles.size()));
-            } while (randomElement.getName().equalsIgnoreCase("admin"));
-            System.out.print(randomElement);
-            guild.addRoleToMember(player.getMember(), randomElement).queue();
+        startGameTimer();
+
+        // Not sure if we actually want discord roles for game roles? uncomment this if we do
+//        List<Role> roles = guild.getRoles();
+//        for(Player player : players) {
+//            Role randomElement;
+//            do {
+//                randomElement = roles.get(rand.nextInt(roles.size()));
+//            } while (randomElement.getName().equalsIgnoreCase("admin"));
+//            System.out.print(randomElement);
+//            guild.addRoleToMember(player.getMember(), randomElement).queue();
+//        }
+    }
+
+    private void startGameTimer() {
+        new Thread(() -> {
+            while(true) {
+                try {
+                    Thread.sleep(60 * 1000); // 1 minute
+                } catch (InterruptedException e) {
+                    // don't think this should ever happen?
+                    e.printStackTrace();
+                    return;
+                }
+                this.minutesLeft -= 1;
+                if (minutesLeft > 0) {
+                    players.forEach(Player::announceTimeRemaining);
+                } else {
+                    gameOver();
+                }
+            }
+        }).start();
+    }
+
+    private void gameOver() {
+        String message = "Game over!\n";
+        message += getSpy().getName() + " was the spy.\n";
+        if (getSpyMission().spyWins()) {
+            message += "The spy accomplished their mission, and won!\n";
+        } else {
+            message += "The spy did not accomplish their mission on time. Everybody else wins!";
         }
+        String finalMessage = message;
+        players.forEach(p -> p.sendPrivateMessage(finalMessage));
+        movePlayersToPregame();
     }
 
     public void handlePlayerCommand(MessageReceivedEvent event) {
@@ -93,5 +134,25 @@ public class Game {
 
     public boolean isSpy(Player player) {
         return spy == player;
+    }
+
+    public SpyMission getSpyMission() {
+        return spyMission;
+    }
+
+    public Player getSpy() {
+        return this.spy;
+    }
+
+    public int getRoomCount() {
+        return this.rooms.size();
+    }
+
+    public void addRoom(Room room) {
+        this.rooms.add(room);
+    }
+
+    public int getMinutesLeft() {
+        return minutesLeft;
     }
 }

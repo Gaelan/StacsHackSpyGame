@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 import javax.security.auth.login.LoginException;
 
@@ -18,7 +19,9 @@ public class Bot extends ListenerAdapter
     public static void main(String[] args) throws LoginException {
         JDABuilder.createDefault("ODIwMzAyOTE2OTM4MTA0ODMy.YEzMnw.NWgsENMO7Gy85tl_bC1k4Ss_PAo")
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                .enableIntents(GatewayIntent.GUILD_PRESENCES)
                 .enableIntents(GatewayIntent.GUILD_VOICE_STATES)
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(new Bot())
 //                .setActivity(Activity.playing("Type !ping"))
                 .build();
@@ -51,7 +54,7 @@ public class Bot extends ListenerAdapter
             } else {
                 channel.sendMessage("Please make sure everyone is in the Pregame voice channel before starting.").queue();
             }
-        } else {
+        } else if (this.currentGame != null) {
             this.currentGame.handlePlayerCommand(event);
         }
     }

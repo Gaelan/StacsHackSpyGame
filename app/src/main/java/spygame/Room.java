@@ -17,6 +17,7 @@ public class Room {
         this.name = name;
         this.description = description;
         this.items = items;
+        game.addRoom(this);
     }
 
     String getName() {

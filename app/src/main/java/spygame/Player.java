@@ -39,7 +39,7 @@ public class Player {
         sendPrivateMessage("You arrive at the party, entering into the " + currentRoom.getName() + ". " + currentRoom.getDescription());
         sendPrivateMessage("To move, use commands like `go dining room`.");
         if (game.isSpy(this)) {
-            sendPrivateMessage(":detective: You're the spy! Don't tell anyone else.");
+            sendPrivateMessage(":detective: You're the spy! Don't tell anyone else. Your secret mission: " + game.getSpyMission().describe());
         }
     }
 
@@ -137,11 +137,16 @@ public class Player {
                     currentItem = null;
                 }
             }
-        }
-        else {
+        } else if (this.isSpy()) {
+            game.getSpyMission().handleSpyMessage(event);
+        } else {
             sendPrivateMessage("I'm afraid I don't understand.");
         }
         
+    }
+
+    private boolean isSpy() {
+        return game.isSpy(this);
     }
 
     private void inv() {
@@ -184,5 +189,20 @@ public class Player {
 
     public boolean readyToStart() {
         return Objects.requireNonNull(getMember().getVoiceState()).getChannel() != null;
+    }
+
+    public Room getCurrentRoom() {
+        return currentRoom;
+    }
+
+    public void announceTimeRemaining() {
+        if (game.getMinutesLeft() == 1) {
+            sendPrivateMessage("There is 1 minute remaining.");
+        } else {
+            sendPrivateMessage("There are " + game.getMinutesLeft() + " minutes remaining.");
+        }
+        if (this.isSpy()) {
+            sendPrivateMessage(game.getSpyMission().statusUpdate());
+        }
     }
 }
