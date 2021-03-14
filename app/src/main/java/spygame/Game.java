@@ -71,7 +71,14 @@ public class Game {
         started = true;
 
         this.spy = players.get(rand.nextInt(players.size()));
-        this.spyMission = new PlantMicrophoneMission(this);
+        switch (rand.nextInt(2)) {
+            case 0:
+                this.spyMission = new PlantMicrophoneMission(this);
+                break;
+            case 1:
+                this.spyMission = new FollowMovementsMission(this);
+                break;
+        }
 
         players.forEach(Player::startGame);
 
