@@ -137,6 +137,9 @@ public class Player {
                     currentItem = null;
                 }
             }
+        } else if (msg.equals("?")) {
+            sendPrivateMessage("You can\n"+
+                               "go to _, look, pick up _, inv, vote _, drop _, drop, ?");
         }
         else {
             sendPrivateMessage("I'm afraid I don't understand.");
